@@ -4,9 +4,9 @@
 
 ## About
 
-Go library for distance calculation on a sphere surface with both decimal degrees (DD) or degrees minutes seconds (DMS) coordinates.
+_goversine_ is a Golang package for distance calculation on a sphere surface with both decimal degrees (DD) or degrees minutes seconds (DMS) coordinates.
 
-Main package features:
+_goversine_ main features:
 
 - Allows calculating distances between to points in metres, kilometres or miles.
 - Allows using decimal degree (DD) or degrees minutes seconds (DMS) coordinates.
@@ -463,9 +463,9 @@ Haversine formula resolver.
 - Methods:
   - [.GetBearing(startPoint, endPoint)](#Haversine+GetBearing) ⇒ [`SphereBearing`](#SphereBearing)
   - [.GetDistance(pointA, pointB)](#Haversine+GetDistance) ⇒ `float64`
+  - [.GetInRange(referencePoint, points, distance)](#Haversine+GetInRange) ⇒ `[]*DDPoint`
   - [.GetPoint(startPoint, bearing, distance)](#Haversine+GetPoint) ⇒ [`DDPoint`](#DDPoint)
   - [.SortByDistance(referencePoint, points, [sorting])](#Haversine+SortByDistance) ⇒ `[]*DDPoint`
-  - [.GetInRange(referencePoint, points, distance)](#Haversine+GetInRange) ⇒ `[]*DDPoint`
 
 <a name="NewHaversine"></a>
 
@@ -658,7 +658,7 @@ const (
 
 ## Support
 
-In order to notify some problem or suggest an improvement or new feature, submit an issue in the GitHub repository [issues](https://github.com/VGavara/goversine/issues) section.
+In order to notify some problem or suggest an improvement or new feature, submit an issue in the GitHub repository [issues](https://github.com/vgavara/goversine/issues) section.
 
 ## License
 
@@ -666,4 +666,4 @@ This package is licensed under the [MIT](https://opensource.org/licenses/MIT) te
 
 ## Contact
 
-You can contact the package creator via [email](mailto:vgavara@gmail.com), [GitHub](https://github.com/VGavara) or [LinkedIn](https://www.linkedin.com/in/vgavara/).
+You can contact the package creator via [email](mailto:vgavara@gmail.com), [GitHub](https://github.com/vgavara) or [LinkedIn](https://www.linkedin.com/in/vgavara/).
