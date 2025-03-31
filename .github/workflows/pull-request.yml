@@ -1,0 +1,24 @@
+name: Pull Requests CI
+
+on:
+  pull_request:
+    branches:
+      - master
+      - stable
+
+jobs:
+  build_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+      - name: Install module requirements
+        run: go mod download
+      - name: Build code
+        run: go build -v ./...
+      - name: Run unit tests
+        run: go test -cover -v ./...
