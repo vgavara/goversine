@@ -2,6 +2,9 @@ package goversine
 
 import (
 	"testing"
+
+	"github.com/vgavara/goversine/internal/constants"
+	"github.com/vgavara/goversine/internal/testutils"
 )
 
 func TestDDPointCreation(t *testing.T) {
@@ -11,12 +14,12 @@ func TestDDPointCreation(t *testing.T) {
 		longitude float64
 		expectErr bool
 	}{
-		{"Valid minimum values", minLatitude, minLongitude, false},
-		{"Valid maximum values", maxLatitude, maxLongitude, false},
-		{"Latitude too small", minLatitude - offset, 0, true},
-		{"Latitude too large", maxLatitude + offset, 0, true},
-		{"Longitude too small", 0, minLongitude - offset, true},
-		{"Longitude too large", 0, maxLongitude + offset, true},
+		{"Valid minimum values", constants.MinLatitude, constants.MinLongitude, false},
+		{"Valid maximum values", constants.MaxLatitude, constants.MaxLongitude, false},
+		{"Latitude too small", constants.MinLatitude - constants.Offset, 0, true},
+		{"Latitude too large", constants.MaxLatitude + constants.Offset, 0, true},
+		{"Longitude too small", 0, constants.MinLongitude - constants.Offset, true},
+		{"Longitude too large", 0, constants.MaxLongitude + constants.Offset, true},
 	}
 
 	for _, tt := range tests {
@@ -31,36 +34,28 @@ func TestDDPointCreation(t *testing.T) {
 }
 
 func TestDDPointToDMSPoint(t *testing.T) {
-	ddPoint := MustNewDDPoint(decimalLatitude, decimalLongitude)
+	ddPoint := MustNewDDPoint(testutils.DecimalLatitude, testutils.DecimalLongitude)
 	dmsPoint := ddPoint.ToDMSPoint()
 
-	// Expected DMS values derived from TypeScript tests
-	expectedLatDegrees := 55.0
-	expectedLatMinutes := 44.0
-	expectedLatSeconds := 55.68
-	expectedLongDegrees := -12.0
-	expectedLongMinutes := 31.0
-	expectedLongSeconds := 8.76
-
 	// Test latitude
-	if dmsPoint.Latitude.Degrees != expectedLatDegrees {
-		t.Errorf("Latitude degrees: got %v, expected %v", dmsPoint.Latitude.Degrees, expectedLatDegrees)
+	if dmsPoint.Latitude.Degrees != testutils.DmsLatDegrees {
+		t.Errorf("Latitude degrees: got %v, expected %v", dmsPoint.Latitude.Degrees, testutils.DmsLatDegrees)
 	}
-	if dmsPoint.Latitude.Minutes != expectedLatMinutes {
-		t.Errorf("Latitude minutes: got %v, expected %v", dmsPoint.Latitude.Minutes, expectedLatMinutes)
+	if dmsPoint.Latitude.Minutes != testutils.DmsLatMinutes {
+		t.Errorf("Latitude minutes: got %v, expected %v", dmsPoint.Latitude.Minutes, testutils.DmsLatMinutes)
 	}
-	if round(dmsPoint.Latitude.Seconds, 2) != expectedLatSeconds {
-		t.Errorf("Latitude seconds: got %v, expected %v", round(dmsPoint.Latitude.Seconds, 2), expectedLatSeconds)
+	if round(dmsPoint.Latitude.Seconds, 2) != testutils.DmsLatSeconds {
+		t.Errorf("Latitude seconds: got %v, expected %v", round(dmsPoint.Latitude.Seconds, 2), testutils.DmsLatSeconds)
 	}
 
 	// Test longitude
-	if dmsPoint.Longitude.Degrees != expectedLongDegrees {
-		t.Errorf("Longitude degrees: got %v, expected %v", dmsPoint.Longitude.Degrees, expectedLongDegrees)
+	if dmsPoint.Longitude.Degrees != testutils.DmsLongDegrees {
+		t.Errorf("Longitude degrees: got %v, expected %v", dmsPoint.Longitude.Degrees, testutils.DmsLongDegrees)
 	}
-	if dmsPoint.Longitude.Minutes != expectedLongMinutes {
-		t.Errorf("Longitude minutes: got %v, expected %v", dmsPoint.Longitude.Minutes, expectedLongMinutes)
+	if dmsPoint.Longitude.Minutes != testutils.DmsLongMinutes {
+		t.Errorf("Longitude minutes: got %v, expected %v", dmsPoint.Longitude.Minutes, testutils.DmsLongMinutes)
 	}
-	if round(dmsPoint.Longitude.Seconds, 2) != expectedLongSeconds {
-		t.Errorf("Longitude seconds: got %v, expected %v", round(dmsPoint.Longitude.Seconds, 2), expectedLongSeconds)
+	if round(dmsPoint.Longitude.Seconds, 2) != testutils.DmsLongSeconds {
+		t.Errorf("Longitude seconds: got %v, expected %v", round(dmsPoint.Longitude.Seconds, 2), testutils.DmsLongSeconds)
 	}
 }

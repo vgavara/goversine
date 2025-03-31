@@ -2,6 +2,8 @@ package goversine
 
 import (
 	"testing"
+
+	"github.com/vgavara/goversine/internal/constants"
 )
 
 func TestSphereBearingValidation(t *testing.T) {
@@ -11,12 +13,12 @@ func TestSphereBearingValidation(t *testing.T) {
 		end       float64
 		expectErr bool
 	}{
-		{"Valid minimum values", minBearing, minBearing, false},
-		{"Valid maximum values", maxBearing, maxBearing, false},
-		{"Start bearing too small", minBearing - offset, minBearing, true},
-		{"Start bearing too large", maxBearing + offset, minBearing, true},
-		{"End bearing too small", minBearing, minBearing - offset, true},
-		{"End bearing too large", minBearing, maxBearing + offset, true},
+		{"Valid minimum values", constants.MinBearing, constants.MinBearing, false},
+		{"Valid maximum values", constants.MaxBearing, constants.MaxBearing, false},
+		{"Start bearing too small", constants.MinBearing - constants.Offset, constants.MinBearing, true},
+		{"Start bearing too large", constants.MaxBearing + constants.Offset, constants.MinBearing, true},
+		{"End bearing too small", constants.MinBearing, constants.MinBearing - constants.Offset, true},
+		{"End bearing too large", constants.MinBearing, constants.MaxBearing + constants.Offset, true},
 	}
 
 	for _, tt := range tests {

@@ -2,17 +2,12 @@ package goversine
 
 import (
 	"testing"
+
+	"github.com/vgavara/goversine/internal/constants"
+	"github.com/vgavara/goversine/internal/testutils"
 )
 
 func TestDMSCoordinateCreation(t *testing.T) {
-	// Minimum and maximum values
-	minDegrees := -180.0
-	maxDegrees := 180.0
-	minMinutes := 0.0
-	maxMinutes := 59.0
-	minSeconds := 0.0
-	maxSeconds := 59.9999999999
-
 	tests := []struct {
 		name      string
 		degrees   float64
@@ -20,14 +15,14 @@ func TestDMSCoordinateCreation(t *testing.T) {
 		seconds   float64
 		expectErr bool
 	}{
-		{"Valid minimum values", minDegrees, minMinutes, minSeconds, false},
-		{"Valid maximum values", maxDegrees, maxMinutes, maxSeconds, false},
-		{"Degrees too small", minDegrees - offset, minMinutes, minSeconds, true},
-		{"Degrees too large", maxDegrees + offset, minMinutes, minSeconds, true},
-		{"Minutes too small", minDegrees, minMinutes - offset, minSeconds, true},
-		{"Minutes too large", minDegrees, maxMinutes + offset, minSeconds, true},
-		{"Seconds too small", minDegrees, minMinutes, minSeconds - offset, true},
-		{"Seconds too large", minDegrees, minMinutes, maxSeconds + offset, true},
+		{"Valid minimum values", constants.MinDegrees, constants.MinMinutes, constants.MinSeconds, false},
+		{"Valid maximum values", constants.MaxDegrees, constants.MaxMinutes, constants.MaxSeconds, false},
+		{"Degrees too small", constants.MinDegrees - constants.Offset, constants.MinMinutes, constants.MinSeconds, true},
+		{"Degrees too large", constants.MaxDegrees + constants.Offset, constants.MinMinutes, constants.MinSeconds, true},
+		{"Minutes too small", constants.MinDegrees, constants.MinMinutes - constants.Offset, constants.MinSeconds, true},
+		{"Minutes too large", constants.MinDegrees, constants.MaxMinutes + constants.Offset, constants.MinSeconds, true},
+		{"Seconds too small", constants.MinDegrees, constants.MinMinutes, constants.MinSeconds - constants.Offset, true},
+		{"Seconds too large", constants.MinDegrees, constants.MinMinutes, constants.MaxSeconds + constants.Offset, true},
 	}
 
 	for _, tt := range tests {
@@ -43,8 +38,8 @@ func TestDMSCoordinateCreation(t *testing.T) {
 
 func TestDMSPointCreation(t *testing.T) {
 	// Create valid coordinates
-	validLatitude := DMSCoordinate{Degrees: minLatitude, Minutes: 0, Seconds: 0}
-	validLongitude := DMSCoordinate{Degrees: minLongitude, Minutes: 0, Seconds: 0}
+	validLatitude := DMSCoordinate{Degrees: constants.MinLatitude, Minutes: 0, Seconds: 0}
+	validLongitude := DMSCoordinate{Degrees: constants.MinLongitude, Minutes: 0, Seconds: 0}
 
 	// Test valid point creation
 	_, err := NewDMSPoint(validLatitude, validLongitude)
@@ -53,13 +48,13 @@ func TestDMSPointCreation(t *testing.T) {
 	}
 
 	// Test latitude out of bounds
-	invalidLatitude := DMSCoordinate{Degrees: minLatitude - offset, Minutes: 0, Seconds: 0}
+	invalidLatitude := DMSCoordinate{Degrees: constants.MinLatitude - constants.Offset, Minutes: 0, Seconds: 0}
 	_, err = NewDMSPoint(invalidLatitude, validLongitude)
 	if err == nil {
 		t.Errorf("Should fail when latitude out of bounds")
 	}
 
-	invalidLatitude = DMSCoordinate{Degrees: maxLatitude + offset, Minutes: 0, Seconds: 0}
+	invalidLatitude = DMSCoordinate{Degrees: constants.MaxLatitude + constants.Offset, Minutes: 0, Seconds: 0}
 	_, err = NewDMSPoint(invalidLatitude, validLongitude)
 	if err == nil {
 		t.Errorf("Should fail when latitude out of bounds")
@@ -67,17 +62,17 @@ func TestDMSPointCreation(t *testing.T) {
 }
 
 func TestDMSPointToDDPoint(t *testing.T) {
-	// DMS coordinates from original tests
+	// DMS coordinates for testing
 	dmsLatitude := DMSCoordinate{
-		Degrees: 55,
-		Minutes: 44,
-		Seconds: 55.68,
+		Degrees: testutils.DmsLatDegrees,
+		Minutes: testutils.DmsLatMinutes,
+		Seconds: testutils.DmsLatSeconds,
 	}
 
 	dmsLongitude := DMSCoordinate{
-		Degrees: -12,
-		Minutes: 31,
-		Seconds: 8.76,
+		Degrees: testutils.DmsLongDegrees,
+		Minutes: testutils.DmsLongMinutes,
+		Seconds: testutils.DmsLongSeconds,
 	}
 
 	dmsPoint := DMSPoint{
@@ -88,11 +83,11 @@ func TestDMSPointToDDPoint(t *testing.T) {
 	ddPoint := dmsPoint.ToDDPoint()
 
 	// Check conversion accuracy
-	if round(ddPoint.Latitude, 4) != decimalLatitude {
-		t.Errorf("Latitude conversion: got %v, expected %v", round(ddPoint.Latitude, 4), decimalLatitude)
+	if round(ddPoint.Latitude, 4) != testutils.DecimalLatitude {
+		t.Errorf("Latitude conversion: got %v, expected %v", round(ddPoint.Latitude, 4), testutils.DecimalLatitude)
 	}
 
-	if round(ddPoint.Longitude, 4) != decimalLongitude {
-		t.Errorf("Longitude conversion: got %v, expected %v", round(ddPoint.Longitude, 4), decimalLongitude)
+	if round(ddPoint.Longitude, 4) != testutils.DecimalLongitude {
+		t.Errorf("Longitude conversion: got %v, expected %v", round(ddPoint.Longitude, 4), testutils.DecimalLongitude)
 	}
 }

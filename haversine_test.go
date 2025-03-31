@@ -3,32 +3,20 @@ package goversine
 import (
 	"math"
 	"testing"
-)
 
-// Test constants similar to the ones in the original TypeScript tests
-const (
-	decimalLatitude  = 55.7488
-	decimalLongitude = -12.5191
-
-	minLatitude   = -90
-	maxLatitude   = 90
-	minLongitude  = -180
-	maxLongitude  = 180
-	minBearing    = 0
-	maxBearing    = 359.9999999999
-	offset        = 0.0000000001
-	earthVMRadius = 6371 // Earth volumetric mean radius in km
+	"github.com/vgavara/goversine/internal/constants"
+	"github.com/vgavara/goversine/internal/testutils"
 )
 
 func TestHaversineDistance(t *testing.T) {
-	pointA := MustNewDDPoint(decimalLatitude, decimalLongitude)
-	pointB := MustNewDDPoint(decimalLongitude, decimalLatitude)
+	pointA := MustNewDDPoint(testutils.DecimalLatitude, testutils.DecimalLongitude)
+	pointB := MustNewDDPoint(testutils.DecimalLongitude, testutils.DecimalLatitude)
 
 	// Expected distances in different units
 	earthERPointABDistances := map[UnitOfDistance]float64{
-		Metre:     9863963.349498631,
-		Kilometre: 9863.96334949863,
-		Mile:      6129.183297734562,
+		Metre:     testutils.DistanceInM,
+		Kilometre: testutils.DistanceInKm,
+		Mile:      testutils.DistanceInMi,
 	}
 
 	// Test different units
@@ -43,38 +31,35 @@ func TestHaversineDistance(t *testing.T) {
 	}
 
 	// Test with custom radius (Earth volumetric mean radius)
-	haversine := NewHaversine(Kilometre, earthVMRadius)
+	haversine := NewHaversine(Kilometre, constants.EarthVolumetricMeanRadius)
 	distance := haversine.GetDistance(pointA, pointB)
 
-	expected := 9852.925783760333 // Calculated from TS tests
+	expected := testutils.EarthVMRDistanceInKm
 	if math.Abs(distance-expected) > expected*0.01 {
 		t.Errorf("GetDistance with custom radius: got %v, expected %v", distance, expected)
 	}
 }
 
 func TestBearingCalculation(t *testing.T) {
-	pointA := MustNewDDPoint(decimalLatitude, decimalLongitude)
-	pointB := MustNewDDPoint(decimalLongitude, decimalLatitude)
-
-	startBearingAB := 114.89155195269666
-	endBearingAB := 148.4680591475153
+	pointA := MustNewDDPoint(testutils.DecimalLatitude, testutils.DecimalLongitude)
+	pointB := MustNewDDPoint(testutils.DecimalLongitude, testutils.DecimalLatitude)
 
 	haversine := NewHaversine(Kilometre)
 	bearing := haversine.GetBearing(pointA, pointB)
 
-	if math.Abs(bearing.Start-startBearingAB) > 0.1 {
-		t.Errorf("Start bearing: got %v, expected %v", bearing.Start, startBearingAB)
+	if math.Abs(bearing.Start-testutils.StartBearingAB) > 0.1 {
+		t.Errorf("Start bearing: got %v, expected %v", bearing.Start, testutils.StartBearingAB)
 	}
 
-	if math.Abs(bearing.End-endBearingAB) > 0.1 {
-		t.Errorf("End bearing: got %v, expected %v", bearing.End, endBearingAB)
+	if math.Abs(bearing.End-testutils.EndBearingAB) > 0.1 {
+		t.Errorf("End bearing: got %v, expected %v", bearing.End, testutils.EndBearingAB)
 	}
 }
 
 func TestEndpointCalculation(t *testing.T) {
-	pointA := MustNewDDPoint(decimalLatitude, decimalLongitude)
-	startBearingAB := 114.89155195269666
-	distance := 9863.96334949863 // km
+	pointA := MustNewDDPoint(testutils.DecimalLatitude, testutils.DecimalLongitude)
+	startBearingAB := testutils.StartBearingAB
+	distance := testutils.DistanceInKm
 
 	haversine := NewHaversine(Kilometre)
 	endPoint, err := haversine.GetPoint(pointA, startBearingAB, distance)
@@ -82,7 +67,7 @@ func TestEndpointCalculation(t *testing.T) {
 		t.Fatalf("GetPoint returned error: %v", err)
 	}
 
-	expectedPointB := MustNewDDPoint(decimalLongitude, decimalLatitude)
+	expectedPointB := MustNewDDPoint(testutils.DecimalLongitude, testutils.DecimalLatitude)
 
 	// Allow some rounding differences
 	if math.Abs(endPoint.Latitude-expectedPointB.Latitude) > 0.1 ||
